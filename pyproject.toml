@@ -10,9 +10,15 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
 
+[project.optional-dependencies]
+modelgen = [
+    "huggingface_hub>=0.31.0",
+    "llama-cpp-python>=0.3.7",
+]
+
 [tool.setuptools]
 package-dir = {"" = "src"}
-script-files = ["sqlextractor"]
+script-files = ["sqlextractor", "sqlamodelgen"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
