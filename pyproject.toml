@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sqlextractor"
+version = "0.1.0"
+description = "Extract SQL strings from source code"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+script-files = ["sqlextractor"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
