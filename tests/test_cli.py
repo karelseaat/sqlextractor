@@ -92,11 +92,11 @@ class CliTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             (root / "Example.java").write_text(
-                'String bad = "s voor de receipts.\\n"\n'
+                'String bad = "notes for receipts.\\n"\n'
                 '    + "public static Date findLatestChangeTimestampForReceipts(...)\\n"\n'
                 '    + "{\\n"\n'
-                '    + "String query = \\"SELECT MAX(CR.updated_at) AS last_updated \\";";\n'
-                'String good = "SELECT MAX(CR.updated_at) AS last_updated FROM receipts CR";\n',
+                '    + "String query = \\"SELECT MAX(r.updated_at) AS last_updated \\";";\n'
+                'String good = "SELECT MAX(r.updated_at) AS last_updated FROM receipts r";\n',
                 encoding="utf-8",
             )
             output_path = root / "queries.sql"
@@ -110,7 +110,7 @@ class CliTests(unittest.TestCase):
             self.assertNotIn("public static", content)
             self.assertEqual(
                 content.strip(),
-                "SELECT MAX(CR.updated_at) AS last_updated FROM receipts CR",
+                "SELECT MAX(r.updated_at) AS last_updated FROM receipts r",
             )
 
 

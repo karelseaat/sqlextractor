@@ -374,8 +374,43 @@ def _consume_streamed_response(chunks: object, *, prompt_tokens: int = 0) -> str
     return "".join(parts)
 
 
+_CONTINUATION_KEYWORDS = {
+    "select", "from", "where", "and", "or", "not", "in", "on", "join", "inner",
+    "left", "right", "full", "outer", "cross", "using", "set", "values",
+    "group", "order", "by", "having", "union", "intersect", "except", "as",
+}
+
+_CONTINUATION_TAIL_CHARS = {",", "(", ".", "+", "-", "*", "/", "%", "=", "<", ">"}
+
+
 def _split_sql_statements(schema_sql: str) -> list[str]:
-    return [part.strip() for part in re.split(r"\n\s*\n+", schema_sql) if part.strip()]
+    statements: list[str] = []
+    for segment in schema_sql.split(";"):
+        statements.extend(_split_segment_on_blank_lines(segment))
+    return statements
+
+
+def _split_segment_on_blank_lines(segment: str) -> list[str]:
+    fragments = [part.strip() for part in re.split(r"\n\s*\n+", segment) if part.strip()]
+    merged: list[str] = []
+    for fragment in fragments:
+        if merged and _continues_previous_statement(merged[-1]):
+            merged[-1] = f"{merged[-1]}\n{fragment}"
+            continue
+        merged.append(fragment)
+    return merged
+
+
+def _continues_previous_statement(statement: str) -> bool:
+    stripped = statement.rstrip()
+    if not stripped:
+        return False
+    if stripped.count("(") > stripped.count(")"):
+        return True
+    if stripped[-1] in _CONTINUATION_TAIL_CHARS:
+        return True
+    words = re.findall(r"[a-z_][a-z0-9_]*", stripped.lower())
+    return bool(words) and words[-1] in _CONTINUATION_KEYWORDS
 
 
 def _leading_verb(statement: str) -> str:

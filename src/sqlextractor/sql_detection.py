@@ -3,15 +3,17 @@ from __future__ import annotations
 import re
 import textwrap
 
+_FLAGS = re.IGNORECASE | re.DOTALL | re.MULTILINE
+
 SQL_PATTERNS = [
-    re.compile(r"^\s*select\b.+\bfrom\b", re.IGNORECASE | re.DOTALL),
-    re.compile(r"^\s*insert\s+into\b.+\bvalues\b", re.IGNORECASE | re.DOTALL),
-    re.compile(r"^\s*update\b.+\bset\b", re.IGNORECASE | re.DOTALL),
-    re.compile(r"^\s*delete\s+from\b", re.IGNORECASE | re.DOTALL),
-    re.compile(r"^\s*create\s+(table|view|index|schema)\b", re.IGNORECASE | re.DOTALL),
-    re.compile(r"^\s*alter\s+table\b", re.IGNORECASE | re.DOTALL),
-    re.compile(r"^\s*drop\s+(table|view|index)\b", re.IGNORECASE | re.DOTALL),
-    re.compile(r"^\s*with\b.+\b(select|insert|update|delete)\b", re.IGNORECASE | re.DOTALL),
+    re.compile(r"^\s*select\b.+\bfrom\b", _FLAGS),
+    re.compile(r"^\s*insert\s+into\b.+\bvalues\b", _FLAGS),
+    re.compile(r"^\s*update\b.+\bset\b", _FLAGS),
+    re.compile(r"^\s*delete\s+from\b", _FLAGS),
+    re.compile(r"^\s*create\s+(table|view|index|schema)\b", _FLAGS),
+    re.compile(r"^\s*alter\s+table\b", _FLAGS),
+    re.compile(r"^\s*drop\s+(table|view|index)\b", _FLAGS),
+    re.compile(r"^\s*with\b.+\b(select|insert|update|delete)\b", _FLAGS),
 ]
 
 SQL_KEYWORDS = {

@@ -63,18 +63,21 @@ UPDATE users SET email = ?
     def test_infer_schema_summary_is_compact(self) -> None:
         summary = infer_schema_summary(
             """
-SELECT b.id, b.code, b.asset_id, t.code_ref
+SELECT b.id, b.code, b.asset_id, a.label
 FROM batches b
-LEFT JOIN assets t ON t.asset_id = b.asset_id
+LEFT JOIN assets a ON a.id = b.asset_id
 
-UPDATE batches SET Status = ?, asset_id = ?
+UPDATE batches SET status = ?, asset_id = ?
 
-INSERT INTO assets (asset_id, code_ref) VALUES (?, ?)
+INSERT INTO assets (id, label) VALUES (?, ?)
 """
         )
         self.assertIn("Input type: inferred schema summary", summary)
         self.assertIn("TABLE batches", summary)
         self.assertIn("TABLE assets", summary)
+        self.assertIn("assets.id = batches.asset_id", summary)
+        self.assertIn("status", summary)
+        self.assertIn("label", summary)
         self.assertNotIn("LEFT JOIN assets", summary)
 
     def test_streamed_response_reports_progress(self) -> None:
